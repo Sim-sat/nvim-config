@@ -31,6 +31,13 @@ return {
     ---@type render.md.UserConfig
     opts = {},
   },
+    { "nvim-mini/mini.ai" },
+  {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    opts = {},
+  },
+  { "xiyaowong/transparent.nvim" },
   {
     "folke/snacks.nvim",
     priority = 1000,
