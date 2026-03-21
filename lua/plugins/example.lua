@@ -10,13 +10,15 @@ return {
     },
   },
   {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    build = "cd app && yarn install",
-    init = function()
-      vim.g.mkdp_filetypes = { "markdown" }
-    end,
-    ft = { "markdown" },
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        javascript = { "prettier", "eslint_d" },
+        typescript = { "prettier", "eslint_d" },
+        javascriptreact = { "prettier", "eslint_d" },
+        typescriptreact = { "prettier", "eslint_d" },
+      },
+    },
   },
   {
     "nvim-lualine/lualine.nvim",
@@ -31,12 +33,7 @@ return {
     ---@type render.md.UserConfig
     opts = {},
   },
-    { "nvim-mini/mini.ai" },
-  {
-    "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-    opts = {},
-  },
+  { "nvim-mini/mini.ai" },
   { "xiyaowong/transparent.nvim" },
   {
     "folke/snacks.nvim",
@@ -63,5 +60,9 @@ return {
         globalstatus = true, -- Eine durchgehende Leiste ganz unten
       },
     },
+  },
+  {
+    "f-person/git-blame.nvim",
+    event = "VeryLazy",
   },
 }
