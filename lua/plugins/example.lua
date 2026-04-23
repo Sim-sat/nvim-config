@@ -34,14 +34,155 @@ return {
     opts = {},
   },
   { "nvim-mini/mini.ai" },
+  {
+    "nvim-mini/mini.files",
+    opts = {
+      mappings = {
+        go_in_plus = "<CR>",
+        close = "<Esc>",
+      },
+    },
+    config = function(_, opts)
+      require("mini.files").setup(opts)
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniFilesBufferCreate",
+        callback = function(args)
+          vim.keymap.set("n", "gc", function()
+            local entry = require("mini.files").get_fs_entry()
+            local dir = entry.fs_type == "directory" and entry.path or vim.fn.fnamemodify(entry.path, ":h")
+            vim.cmd.cd(dir)
+            vim.notify("cwd: " .. dir)
+            require("mini.files").open(dir, false)
+          end, { buffer = args.data.buf_id, desc = "Set cwd and open" })
+        end,
+      })
+    end,
+    keys = {
+      {
+        "<leader>e",
+        function()
+          require("mini.files").open(vim.uv.cwd(), false)
+        end,
+        desc = "Open mini.files (cwd)",
+      },
+    },
+  },
   { "xiyaowong/transparent.nvim" },
   {
+    "nvimdev/dashboard-nvim",
+    event = "VimEnter",
+    opts = function()
+      return {
+        theme = "doom",
+        config = {
+          vertical_center = true,
+          header = {
+            "",
+            "",
+            "",
+            "  ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗",
+            "  ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║",
+            "  ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║",
+            "  ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║",
+            "  ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║",
+            "  ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝",
+            "",
+          },
+          center = {
+            {
+              icon = "󰈔 ",
+              icon_hl = "DiagnosticInfo",
+              desc = "Find Files",
+              desc_hl = "String",
+              key = "f",
+              action = function()
+                require("fzf-lua").files()
+              end,
+            },
+            {
+              icon = "󰁯 ",
+              icon_hl = "DiagnosticWarn",
+              desc = "Recent Files",
+              desc_hl = "String",
+              key = "r",
+              action = function()
+                require("fzf-lua").oldfiles()
+              end,
+            },
+            {
+              icon = "󱉭 ",
+              icon_hl = "DiagnosticHint",
+              desc = "Recent Projects",
+              desc_hl = "String",
+              key = "p",
+              action = function()
+                require("snacks").picker.projects()
+              end,
+            },
+            {
+              icon = "󰍉 ",
+              icon_hl = "DiagnosticHint",
+              desc = "Grep",
+              desc_hl = "String",
+              key = "g",
+              action = function()
+                require("snacks").picker.grep()
+              end,
+            },
+            {
+              icon = "󰒓 ",
+              icon_hl = "DiagnosticWarn",
+              desc = "Config",
+              desc_hl = "String",
+              key = "c",
+              action = function()
+                require("fzf-lua").files({ cwd = vim.fn.stdpath("config") })
+              end,
+            },
+            {
+              icon = "󰒲 ",
+              icon_hl = "DiagnosticInfo",
+              desc = "Lazy",
+              desc_hl = "String",
+              key = "l",
+              action = "Lazy",
+            },
+            {
+              icon = "󰙳 ",
+              icon_hl = "DiagnosticHint",
+              desc = "Extras",
+              desc_hl = "String",
+              key = "x",
+              action = "LazyExtras",
+            },
+            {
+              icon = "󰩈 ",
+              icon_hl = "DiagnosticError",
+              desc = "Quit",
+              desc_hl = "String",
+              key = "q",
+              action = "qa",
+            },
+          },
+          footer = function()
+            local stats = require("lazy").stats()
+            return { "", "⚡ " .. stats.count .. " plugins loaded in " .. stats.startuptime .. "ms" }
+          end,
+        },
+      }
+    end,
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+  },
+  {
     "folke/snacks.nvim",
-    priority = 1000,
-    lazy = false,
-    ---@type snacks.Config
     opts = {
       scroll = { enabled = false },
+      explorer = { enabled = false },
+      dashboard = { enabled = false },
+    },
+    keys = {
+      { "<leader>e", false }, -- removes LazyVim's default binding
     },
   },
   {
