@@ -1,6 +1,15 @@
 return {
   "neovim/nvim-lspconfig",
-  opts = function(_, opts)
-    opts.diagnostics.virtual_text = false
-  end,
+  opts = {
+    inlay_hints = { enabled = false },
+    servers = {
+      gopls = {
+        settings = {
+          gopls = {
+            usePlaceholders = false,
+          },
+        },
+      },
+    },
+  },
 }
